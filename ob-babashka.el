@@ -41,24 +41,24 @@
 (require 'ob)
 
 (defvar org-babel-tangle-lang-exts)
-(add-to-list 'org-babel-tangle-lang-exts '("babashka" . "clj"))
+(add-to-list 'org-babel-tangle-lang-exts '("bb" . "clj"))
 
-(defvar org-babel-babashka-command (executable-find "bb")
-  "The command to use to compile and run your babashka code.")
+(defvar org-babel-bb-command (executable-find "bb")
+  "The command to use to compile and run your bb code.")
 
-(defvar org-babel-default-header-args:babashka '())
-(defvar org-babel-header-args:babashka '((package . :any)))
+(defvar org-babel-default-header-args:bb '())
+(defvar org-babel-header-args:bb '((package . :any)))
 
-(defun ob-babashka-escape-quotes (str-val)
+(defun ob-bb-escape-quotes (str-val)
   "Escape quotes for STR-VAL so that Lumo can understand."
   (replace-regexp-in-string "\"" "\\\"" str-val 'FIXEDCASE 'LITERAL))
 
-(defun org-babel-expand-body:babashka (body params)
+(defun org-babel-expand-body:bb (body params)
   "Expand BODY according to PARAMS, return the expanded body."
   (let* ((vars (org-babel--get-vars params))
          (result-params (cdr (assq :result-params params)))
          (print-level nil) (print-length nil)
-         (body (ob-babashka-escape-quotes
+         (body (ob-bb-escape-quotes
                 (org-trim
                  (if (null vars)
                      (org-trim body)
@@ -73,21 +73,21 @@
         (format "(print (do %s))" body)
       body)))
 
-(defun org-babel-execute:babashka (body params)
-  "Execute a block of babashka code in BODY with Babel using PARAMS."
-  (let ((expanded (org-babel-expand-body:babashka body params))
+(defun org-babel-execute:bb (body params)
+  "Execute a block of bb code in BODY with Babel using PARAMS."
+  (let ((expanded (org-babel-expand-body:bb body params))
         result)
     (setq result
           (org-babel-trim
            (shell-command-to-string
-            (concat org-babel-babashka-command " -e \"" expanded "\""))))
+            (concat org-babel-bb-command " -e \"" expanded "\""))))
     (org-babel-result-cond (cdr (assoc :result-params params))
       result
       (condition-case nil (org-babel-script-escape result)
         (error result)))))
 
-(define-derived-mode babashka-mode clojure-mode "Babashka"
-  "Major mode for editing Babashka code.")
+(define-derived-mode bb-mode clojure-mode "bb"
+  "Major mode for editing bb code.")
 
 (provide 'ob-babashka)
 
