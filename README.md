@@ -18,3 +18,13 @@ Install with [use-package](https://github.com/jwiegley/use-package) with [straig
       ;; ...
       (babashka . t))))
 ```
+
+## Usage
+
+```org
+#+begin_src bb
+  (def n 40)
+  (+ n 2)
+#+end_src
+```
+
